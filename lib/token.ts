@@ -1,6 +1,9 @@
 let API_TOKEN: string | null = null
 
 export default {
+  getOptionalToken(): string | null {
+    return API_TOKEN
+  },
   get(): string {
     if (API_TOKEN == null) {
       throw new Error('No API token has been set')

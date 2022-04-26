@@ -47,15 +47,16 @@ export async function connect(
         return
       }
 
-      if (event.data.action === CONNECT_ACTION.SUCCESS) {
+      if (event.data.action === CONNECT_ACTION.SET_TOKEN) {
         token.set(event.data.apiToken)
-        resolve(event.data.apiToken)
-      } else if (event.data.action === CONNECT_ACTION.CANCEL) {
-        resolve(null)
+        return
       }
 
-      window.removeEventListener('message', onMessage)
-      iframe.remove()
+      if (event.data.action === CONNECT_ACTION.CLOSE) {
+        window.removeEventListener('message', onMessage)
+        resolve(token.getOptionalToken())
+        iframe.remove()
+      }
     }
   })
 }
@@ -82,10 +83,6 @@ function createIframe() {
       'overflow: hidden',
       'width: 100%',
       'height: 100%',
-      'background: rgba(190, 188, 202, 0.85)',
-      'background: linear-gradient(180deg, rgba(235, 234, 234, 0.85) 0%, rgba(190, 188, 202, 0.85) 100%);',
-      '-webkit-backdrop-filter: blur(28px)',
-      'backdrop-filter: blur(28px)',
       'position: absolute',
       'z-index: 1000',
       'top: 0',
