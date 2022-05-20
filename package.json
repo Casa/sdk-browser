@@ -18,6 +18,9 @@
   "module": "dist/@casainc/browser/index.js",
   "main": "dist/@casainc/browser/index.umd.js",
   "types": "dist/@casainc/browser/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.3.2",
     "@trivago/prettier-plugin-sort-imports": "^3.2.0",
