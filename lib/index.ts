@@ -5,6 +5,10 @@ export function setApiToken(apiToken: string) {
   token.set(apiToken)
 }
 
+export function resetApiToken() {
+  token.reset()
+}
+
 export function setApiOrigin(apiOrigin: string) {
   origin.api = apiOrigin
 }

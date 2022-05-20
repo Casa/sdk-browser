@@ -7,11 +7,11 @@ export interface ConnectOptions {
 }
 
 export async function connect(
-  developerAppId: string,
+  developerName: string,
   options: ConnectOptions = {},
 ): Promise<string | null> {
-  if (developerAppId == null || developerAppId === '') {
-    throw new Error('Cannot connect with Casa without a valid developer app ID')
+  if (developerName == null || developerName === '') {
+    throw new Error('Cannot connect with Casa without a valid developer name')
   }
 
   if (hasIframe()) {
@@ -39,10 +39,10 @@ export async function connect(
       if (event.data.action === CONNECT_ACTION.READY) {
         iframe.contentWindow?.postMessage(
           {
-            developerAppId,
+            developerName,
             options,
           },
-          '*',
+          origin.webApp,
         )
         return
       }

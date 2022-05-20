@@ -1,1 +1,1 @@
-# @casa/browser
+# @casainc/browser

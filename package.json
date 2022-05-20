@@ -1,12 +1,12 @@
 {
-  "name": "@casa/browser",
+  "name": "@casainc/browser",
   "version": "0.1.0",
   "author": "Casa",
   "license": "MIT",
   "scripts": {
     "prebuild": "rm -rf dist/",
     "build": "rollup -c -m",
-    "postbuild": "cp package.json dist/@casa/browser/package.json",
+    "postbuild": "cp package.json dist/@casainc/browser/package.json",
     "develop": "watch 'yarn build' lib/.",
     "format": "prettier --write 'lib/**/*.ts'",
     "prepublish": "yarn format && yarn build"
@@ -15,10 +15,9 @@
     "dist/**",
     "lib/**"
   ],
-  "module": "dist/@casa/browser/index.js",
-  "main": "dist/@casa/browser/index.umd.js",
-  "jsnext:main": "dist/@casa/browser/index.js",
-  "types": "dist/@casa/browser/index.d.ts",
+  "module": "dist/@casainc/browser/index.js",
+  "main": "dist/@casainc/browser/index.umd.js",
+  "types": "dist/@casainc/browser/index.d.ts",
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.3.2",
     "@trivago/prettier-plugin-sort-imports": "^3.2.0",

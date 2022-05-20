@@ -13,4 +13,7 @@ export default {
   set(token: string): void {
     API_TOKEN = token
   },
+  reset(): void {
+    API_TOKEN = null
+  },
 }
