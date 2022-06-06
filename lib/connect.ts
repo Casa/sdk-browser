@@ -3,15 +3,16 @@ import origin from './origin'
 import token from './token'
 
 export interface ConnectOptions {
+  appName: string
   email?: string
 }
 
 export async function connect(
-  developerName: string,
-  options: ConnectOptions = {},
+  options: ConnectOptions,
+  parent: HTMLElement = document.body,
 ): Promise<string | null> {
-  if (developerName == null || developerName === '') {
-    throw new Error('Cannot connect with Casa without a valid developer name')
+  if (options.appName == null || options.appName === '') {
+    throw new Error('Cannot connect with Casa without a valid app name')
   }
 
   if (hasIframe()) {
@@ -19,7 +20,7 @@ export async function connect(
   }
 
   const iframe = createIframe()
-  document.body.appendChild(iframe)
+  parent.appendChild(iframe)
 
   return new Promise<string | null>(resolve => {
     window.addEventListener('message', onMessage)
@@ -37,13 +38,7 @@ export async function connect(
       console.log('Received message: %o', event)
 
       if (event.data.action === CONNECT_ACTION.READY) {
-        iframe.contentWindow?.postMessage(
-          {
-            developerName,
-            options,
-          },
-          origin.webApp,
-        )
+        iframe.contentWindow?.postMessage(options, origin.webApp)
         return
       }
 
