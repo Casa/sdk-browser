@@ -1,6 +1,6 @@
 {
   "name": "@casainc/browser",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "author": "Casa",
   "license": "MIT",
   "scripts": {
@@ -12,7 +12,6 @@
     "lint:eslint:fix": "esprint check --fix",
     "prebuild": "rm -rf dist/",
     "build": "rollup -c -m",
-    "postbuild": "cp package.json dist/package.json",
     "build:check": "tsc --project tsconfig.json",
     "start": "watch 'yarn build' lib/.",
     "prepublish": "yarn lint && yarn build:check && yarn build"
@@ -20,9 +19,9 @@
   "files": [
     "dist/**"
   ],
-  "module": "lib/index.js",
-  "main": "lib/index.cjs.js",
-  "types": "lib/index.d.ts",
+  "module": "dist/index.js",
+  "main": "dist/index.cjs.js",
+  "types": "dist/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
