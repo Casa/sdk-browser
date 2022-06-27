@@ -1,6 +1,6 @@
 {
   "name": "@casainc/browser",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "author": "Casa",
   "license": "MIT",
   "scripts": {
@@ -18,8 +18,7 @@
     "prepublish": "yarn lint && yarn build:check && yarn build"
   },
   "files": [
-    "dist/**",
-    "lib/**"
+    "dist/**"
   ],
   "module": "lib/index.js",
   "main": "lib/index.cjs.js",
