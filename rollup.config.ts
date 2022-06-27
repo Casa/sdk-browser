@@ -7,11 +7,11 @@ export default {
   external: ['@casainc/node'],
   output: [
     {
-      file: `dist/${pkg.module}`,
+      file: pkg.module,
       format: 'es',
     },
     {
-      file: `dist/${pkg.main}`,
+      file: pkg.main,
       format: 'cjs',
     },
   ],
