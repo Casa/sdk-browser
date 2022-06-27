@@ -1,0 +1,11 @@
+{
+  "maxWarnings": 0,
+  "paths": [
+    "./lib/**/*.json",
+    "./lib/**/*.ts"
+  ],
+  "ignored": [
+    "./dist/**/*",
+    "./node_modules/**/*"
+  ]
+}

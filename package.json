@@ -4,32 +4,48 @@
   "author": "Casa",
   "license": "MIT",
   "scripts": {
+    "lint": "yarn lint:eslint && yarn lint:prettier",
+    "lint:fix": "yarn lint:eslint:fix && yarn lint:prettier:fix",
+    "lint:prettier": "prettier --check .",
+    "lint:prettier:fix": "prettier --write .",
+    "lint:eslint": "esprint check",
+    "lint:eslint:fix": "esprint check --fix",
     "prebuild": "rm -rf dist/",
     "build": "rollup -c -m",
-    "postbuild": "cp package.json dist/@casainc/browser/package.json",
+    "postbuild": "cp package.json dist/package.json",
+    "build:check": "tsc --project tsconfig.json",
     "start": "watch 'yarn build' lib/.",
-    "format": "prettier --write 'lib/**/*.ts'",
-    "prepublish": "yarn format && yarn build"
+    "prepublish": "yarn lint && yarn build:check && yarn build"
   },
   "files": [
     "dist/**",
     "lib/**"
   ],
-  "module": "dist/@casainc/browser/index.js",
-  "main": "dist/@casainc/browser/index.umd.js",
-  "types": "dist/@casainc/browser/index.d.ts",
+  "module": "lib/index.js",
+  "main": "lib/index.umd.js",
+  "types": "lib/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@casainc/node": "^0.1.1"
+    "@casainc/node": "^0.1.5"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^22.0.1",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.3.0",
     "@rollup/plugin-typescript": "^8.3.2",
     "@trivago/prettier-plugin-sort-imports": "^3.2.0",
+    "@typescript-eslint/eslint-plugin": "^5.29.0",
+    "@typescript-eslint/parser": "^5.29.0",
+    "eslint": "^8.18.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-jest": "^26.5.3",
+    "esprint": "^3.6.0",
     "prettier": "^2.6.2",
     "rollup": "^2.70.2",
-    "tslib": "^2.3.1",
+    "rollup-plugin-polyfill-node": "^0.9.0",
+    "tslib": "^2.4.0",
     "typescript": "^4.6.3",
     "watch": "^1.0.2"
   }

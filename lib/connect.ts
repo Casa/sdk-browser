@@ -1,32 +1,37 @@
 import { CONNECT_ACTION, CONNECT_ACTIONS, CasaMessage } from './message'
-import origin from './origin'
-import token from './token'
+
+const WEB_APP_ORIGIN = 'https://app.keys.casa'
 
 export interface ConnectOptions {
   appName: string
   email?: string
+  webAppOrigin?: string
 }
 
 export async function connect(
   options: ConnectOptions,
   parent: HTMLElement = document.body,
 ): Promise<string | null> {
-  if (options.appName == null || options.appName === '') {
+  const { appName, webAppOrigin = WEB_APP_ORIGIN } = options
+
+  if (appName == null || appName === '') {
     throw new Error('Cannot connect with Casa without a valid app name')
   }
 
-  if (hasIframe()) {
+  if (hasIframe(webAppOrigin)) {
     return null
   }
 
-  const iframe = createIframe()
+  let token: string | null = null
+
+  const iframe = createIframe(webAppOrigin)
   parent.appendChild(iframe)
 
   return new Promise<string | null>(resolve => {
     window.addEventListener('message', onMessage)
 
     function onMessage(event: MessageEvent<unknown>) {
-      if (event.origin !== origin.webApp) {
+      if (event.origin !== webAppOrigin) {
         return
       }
 
@@ -38,18 +43,23 @@ export async function connect(
       console.log('Received message: %o', event)
 
       if (event.data.action === CONNECT_ACTION.READY) {
-        iframe.contentWindow?.postMessage(options, origin.webApp)
+        const connectOptions: ConnectOptions = {
+          ...options,
+          appName,
+          webAppOrigin,
+        }
+        iframe.contentWindow?.postMessage(connectOptions, webAppOrigin)
         return
       }
 
       if (event.data.action === CONNECT_ACTION.SET_TOKEN) {
-        token.set(event.data.apiToken)
+        token = event.data.apiToken
         return
       }
 
       if (event.data.action === CONNECT_ACTION.CLOSE) {
         window.removeEventListener('message', onMessage)
-        resolve(token.getOptionalToken())
+        resolve(token)
         iframe.remove()
       }
     }
@@ -64,10 +74,10 @@ function isRecognizedMessage(data: unknown): data is CasaMessage {
   return CONNECT_ACTIONS.includes((data as CasaMessage).action)
 }
 
-function createIframe() {
+function createIframe(webAppOrigin: string) {
   const iframe = document.createElement('iframe')
 
-  iframe.setAttribute('src', `${origin.webApp}/connect`)
+  iframe.setAttribute('src', `${webAppOrigin}/connect`)
   iframe.setAttribute('frameborder', '0')
   iframe.setAttribute('width', '100%')
   iframe.setAttribute('height', '100%')
@@ -90,9 +100,8 @@ function createIframe() {
   return iframe
 }
 
-function hasIframe() {
+function hasIframe(webAppOrigin: string) {
   return (
-    document.querySelector(`iframe[src="${`${origin.webApp}/connect`}"]`) !=
-    null
+    document.querySelector(`iframe[src="${`${webAppOrigin}/connect`}"]`) != null
   )
 }

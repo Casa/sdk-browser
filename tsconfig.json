@@ -1,11 +1,10 @@
 {
   "compilerOptions": {
-    "baseUrl": "./lib",
-    "outDir": "./dist",
+    "baseUrl": ".",
+    "outDir": "dist",
     "declaration": true,
     "declarationDir": ".",
-    "target": "es6",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": ["dom", "dom.iterable"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -22,13 +21,16 @@
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "noUncheckedIndexedAccess": true,
     "forceConsistentCasingInFileNames": true,
+    "target": "es6",
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true
+    "noEmit": true,
+    "sourceMap": true
   },
-  "include": [".", "lib"],
-  "exclude": ["./dist", "./rollup.config.ts"]
+  "include": ["lib", "tests"],
+  "exclude": ["./coverage", "./dist"]
 }
