@@ -3,7 +3,7 @@ import { CONNECT_ACTION, CONNECT_ACTIONS, CasaMessage } from './message'
 const WEB_APP_ORIGIN = 'https://app.keys.casa'
 
 export interface ConnectOptions {
-  appName: string
+  appId: string
   email?: string
   webAppOrigin?: string
 }
@@ -12,9 +12,9 @@ export async function connect(
   options: ConnectOptions,
   parent: HTMLElement = document.body,
 ): Promise<string | null> {
-  const { appName, webAppOrigin = WEB_APP_ORIGIN } = options
+  const { appId, webAppOrigin = WEB_APP_ORIGIN } = options
 
-  if (appName == null || appName === '') {
+  if (appId == null || appId === '') {
     throw new Error('Cannot connect with Casa without a valid app name')
   }
 
@@ -45,7 +45,7 @@ export async function connect(
       if (event.data.action === CONNECT_ACTION.READY) {
         const connectOptions: ConnectOptions = {
           ...options,
-          appName,
+          appId,
           webAppOrigin,
         }
         iframe.contentWindow?.postMessage(connectOptions, webAppOrigin)
