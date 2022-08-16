@@ -216,10 +216,10 @@
     "@babel/helper-validator-identifier" "^7.16.7"
     to-fast-properties "^2.0.0"
 
-"@casainc/node@^0.1.6":
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/@casainc/node/-/node-0.1.6.tgz#b9e4243d72916a934a0231a810b7edd7cb751345"
-  integrity sha512-1B5+TxYt2AWIVCGaRW4xMU0nMzyNYOuw2AnTG766dEFmtSLa0/ouqpTvgKusrYO2/iAP/l/E/LeyamE8pVjMHg==
+"@casainc/node@^0.1.7":
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/@casainc/node/-/node-0.1.7.tgz#da6f5bc328988c0d480eb7cbe78beb9a18e195fd"
+  integrity sha512-vW+tc0UXXwLFntM7GY8R8aXZACpDjmwXQ2vgpXVRycLjWqUJUkppwoWV4zLDTiFWh2EaP9+5K2wBnqDkIJmTRw==
   dependencies:
     cross-fetch "^3.1.5"
 
