@@ -2,36 +2,67 @@ import { CONNECT_ACTION, CONNECT_ACTIONS, CasaMessage } from './message'
 
 const WEB_APP_ORIGIN = 'https://app.keys.casa'
 
+let popupWindow: Window | null = null
+
 export interface ConnectOptions {
   appId: string
   email?: string
   webAppOrigin?: string
 }
 
-export async function connect(
-  options: ConnectOptions,
-  parent: HTMLElement = document.body,
-): Promise<string | null> {
+export async function connect(options: ConnectOptions): Promise<string | null> {
   const { appId, webAppOrigin = WEB_APP_ORIGIN } = options
 
   if (appId == null || appId === '') {
     throw new Error('Cannot connect with Casa without a valid app name')
   }
 
-  if (hasIframe(webAppOrigin)) {
+  if (popupWindow != null) {
+    console.warn('Already started to connect with Casa')
     return null
   }
 
+  popupWindow = openPopupWindow({
+    ...options,
+    appId,
+    webAppOrigin,
+  })
+
   let token: string | null = null
 
-  const iframe = createIframe(webAppOrigin)
-  parent.appendChild(iframe)
-
   return new Promise<string | null>(resolve => {
+    const wait = 1000
+    const intervalId = setInterval(() => {
+      // popupWindow?.postMessage('check this out', '*')
+      if (popupWindow == null || popupWindow.closed === true) {
+        clearInterval(intervalId)
+        onClose()
+      }
+    }, wait)
+
+    window.addEventListener('beforeunload', onClose)
     window.addEventListener('message', onMessage)
+
+    function onClose() {
+      window.removeEventListener('beforeunload', onClose)
+      window.removeEventListener('message', onMessage)
+
+      if (popupWindow == null) {
+        return
+      }
+
+      resolve(token)
+      popupWindow.close()
+      popupWindow = null
+    }
 
     function onMessage(event: MessageEvent<unknown>) {
       if (event.origin !== webAppOrigin) {
+        return
+      }
+
+      if (popupWindow == null) {
+        onClose()
         return
       }
 
@@ -42,25 +73,9 @@ export async function connect(
 
       console.log('Received message: %o', event)
 
-      if (event.data.action === CONNECT_ACTION.READY) {
-        const connectOptions: ConnectOptions = {
-          ...options,
-          appId,
-          webAppOrigin,
-        }
-        iframe.contentWindow?.postMessage(connectOptions, webAppOrigin)
-        return
-      }
-
       if (event.data.action === CONNECT_ACTION.SET_TOKEN) {
         token = event.data.apiToken
         return
-      }
-
-      if (event.data.action === CONNECT_ACTION.CLOSE) {
-        window.removeEventListener('message', onMessage)
-        resolve(token)
-        iframe.remove()
       }
     }
   })
@@ -74,34 +89,66 @@ function isRecognizedMessage(data: unknown): data is CasaMessage {
   return CONNECT_ACTIONS.includes((data as CasaMessage).action)
 }
 
-function createIframe(webAppOrigin: string) {
-  const iframe = document.createElement('iframe')
+function openPopupWindow({
+  webAppOrigin,
+  ...options
+}: ConnectOptions & {
+  webAppOrigin: string
+}) {
+  const searchParams = getPopupSearchParams(options)
+  const windowFeatures = getPopupWindowFeatures()
 
-  iframe.setAttribute('src', `${webAppOrigin}/connect`)
-  iframe.setAttribute('frameborder', '0')
-  iframe.setAttribute('width', '100%')
-  iframe.setAttribute('height', '100%')
-
-  iframe.setAttribute(
-    'style',
-    [
-      'overflow: hidden',
-      'width: 100%',
-      'height: 100%',
-      'position: absolute',
-      'z-index: 1000',
-      'top: 0',
-      'left: 0',
-      'right: 0',
-      'bottom: 0',
-    ].join(';'),
+  const popupWindow = window.open(
+    `${webAppOrigin}/connect?${searchParams}`,
+    '',
+    windowFeatures,
   )
 
-  return iframe
+  if (popupWindow?.focus) {
+    popupWindow.focus()
+  }
+
+  return popupWindow
 }
 
-function hasIframe(webAppOrigin: string) {
-  return (
-    document.querySelector(`iframe[src="${`${webAppOrigin}/connect`}"]`) != null
-  )
+function getPopupSearchParams(options: Omit<ConnectOptions, 'webAppOrigin'>) {
+  const searchParams = new URLSearchParams()
+
+  for (const [key, value] of Object.entries(options)) {
+    if (value != null) {
+      searchParams.append(key, String(value))
+    }
+  }
+
+  return searchParams.toString()
+}
+
+function getPopupWindowFeatures() {
+  const width = 1280
+  const height = 880
+
+  // Fixes dual-screen position
+  const dualScreenLeft =
+    window.screenLeft !== undefined ? window.screenLeft : window.screenX
+  const dualScreenTop =
+    window.screenTop !== undefined ? window.screenTop : window.screenY
+
+  const screenWidth =
+    window.innerWidth ?? document.documentElement.clientWidth ?? screen.width
+  const screenHeight =
+    window.innerHeight ?? document.documentElement.clientHeight ?? screen.height
+
+  const half = 0.5
+  const left = half * (screenWidth - width) + dualScreenLeft
+  const top = half * (screenHeight - height) + dualScreenTop
+
+  return [
+    'popup=yes',
+    'menubar=no',
+    'status=no',
+    `width=${width}`,
+    `height=${height}`,
+    `left=${left}`,
+    `top=${top}`,
+  ].join(',')
 }
