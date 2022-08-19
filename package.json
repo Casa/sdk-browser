@@ -13,7 +13,7 @@
     "prebuild": "rm -rf dist/",
     "build": "rollup -c -m",
     "build:check": "tsc --project tsconfig.json",
-    "start": "watch 'yarn build' lib/.",
+    "start": "yarn build -w",
     "prepublish": "yarn lint && yarn build:check && yarn build"
   },
   "files": [
@@ -41,7 +41,6 @@
     "prettier": "^2.6.2",
     "rollup": "^2.70.2",
     "tslib": "^2.4.0",
-    "typescript": "^4.6.3",
-    "watch": "^1.0.2"
+    "typescript": "^4.6.3"
   }
 }
