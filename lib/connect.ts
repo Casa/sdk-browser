@@ -33,7 +33,6 @@ export async function connect(options: ConnectOptions): Promise<string | null> {
   return new Promise<string | null>(resolve => {
     const wait = 1000
     const intervalId = setInterval(() => {
-      // popupWindow?.postMessage('check this out', '*')
       if (popupWindow == null || popupWindow.closed === true) {
         clearInterval(intervalId)
         onClose()
@@ -85,7 +84,6 @@ function isRecognizedMessage(data: unknown): data is CasaMessage {
   if (typeof data !== 'object' || Array.isArray(data) || data == null) {
     return false
   }
-
   return CONNECT_ACTIONS.includes((data as CasaMessage).action)
 }
 
