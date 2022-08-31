@@ -80,6 +80,14 @@ export async function connect(options: ConnectOptions): Promise<string | null> {
   })
 }
 
+export function close() {
+  if (popupWindow == null) {
+    console.warn('No popup window is open')
+    return
+  }
+  popupWindow.close()
+}
+
 function isRecognizedMessage(data: unknown): data is CasaMessage {
   if (typeof data !== 'object' || Array.isArray(data) || data == null) {
     return false
