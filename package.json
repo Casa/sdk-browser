@@ -27,7 +27,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@casainc/node": "^0.1.7"
+    "@casainc/node": "^0.1.8"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.3.2",
