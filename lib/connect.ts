@@ -1,8 +1,35 @@
 import { CONNECT_ACTION, CONNECT_ACTIONS, CasaMessage } from './message'
 
 const WEB_APP_ORIGIN = 'https://app.keys.casa'
-
 let popupWindow: Window | null = null
+
+type LoggerMethod = (message: string, event?: MessageEvent<unknown>) => void
+
+type Logger = {
+  log: LoggerMethod
+  info: LoggerMethod
+  warn: LoggerMethod
+  error: LoggerMethod
+}
+
+const defaultLogger: Logger = {
+  log: console.log,
+  info: console.info,
+  warn: console.warn,
+  error: console.error,
+}
+
+let logger: null | Logger = defaultLogger
+
+export function setLogger(value: boolean | Logger) {
+  if (value === true) {
+    logger = defaultLogger
+  } else if (value === false) {
+    logger = null
+  } else {
+    logger = value
+  }
+}
 
 export interface ConnectOptions {
   appId: string
@@ -18,7 +45,7 @@ export async function connect(options: ConnectOptions): Promise<string | null> {
   }
 
   if (popupWindow != null) {
-    console.warn('Already started to connect with Casa')
+    logger?.warn('Already started to connect with Casa')
     return null
   }
 
@@ -66,11 +93,11 @@ export async function connect(options: ConnectOptions): Promise<string | null> {
       }
 
       if (!isRecognizedMessage(event.data)) {
-        console.warn('Received unrecognized message: %o', event)
+        logger?.warn('Received unrecognized message', event)
         return
       }
 
-      console.log('Received message: %o', event)
+      logger?.log('Received message', event)
 
       if (event.data.action === CONNECT_ACTION.SET_TOKEN) {
         token = event.data.apiToken
@@ -82,7 +109,7 @@ export async function connect(options: ConnectOptions): Promise<string | null> {
 
 export function close() {
   if (popupWindow == null) {
-    console.warn('No popup window is open')
+    logger?.warn('No popup window is open')
     return
   }
   popupWindow.close()
